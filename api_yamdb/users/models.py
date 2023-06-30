@@ -19,6 +19,13 @@ class User(AbstractUser):
         blank=True,
     )
 
+    confirmation_code = models.CharField(
+        max_length=36,
+        unique=True,
+        null=True,
+        blank=True
+    )
+
     @property
     def is_user(self):
         return self.role == 'U'
