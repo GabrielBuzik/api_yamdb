@@ -9,6 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
+    role = serializers.CharField(read_only=True)
 
     class Meta:
         fields = (
