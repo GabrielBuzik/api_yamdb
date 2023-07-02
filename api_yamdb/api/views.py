@@ -1,6 +1,13 @@
+
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from api.serializers import CommentSerializer, ReviewSerializer
+from rest_framework import viewsets
+
+from reviews.models import Title, Category, Genre
+from .serializers import (
+    TitleSerializer, CategorySerializer, GenreSerializer,
+)
 
 from reviews.models import Review, Title
 
@@ -43,3 +50,18 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(author=user, review=self.get_review)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
