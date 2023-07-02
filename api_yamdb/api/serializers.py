@@ -5,6 +5,8 @@ from reviews.models import Title, Category, Genre
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre')
