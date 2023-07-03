@@ -6,7 +6,8 @@ class IsAdminOrAction(permissions.BasePermission):
         if view.action == 'me':
             return True
         return (request.user.is_authenticated and
-                request.user.role == 'admin'
+                (request.user.role == 'admin' or
+                 request.user.is_superuser)
         )
     
 

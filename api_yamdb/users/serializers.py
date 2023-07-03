@@ -2,12 +2,15 @@ from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from rest_framework.validators import UniqueValidator
 
+import re
+
 from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        max_length=254,
+        validators=[UniqueValidator(queryset=User.objects.all())],
     )
     role = serializers.CharField(read_only=True)
 
@@ -21,3 +24,15 @@ class UserSerializer(serializers.ModelSerializer):
             'role',
         )
         model = User
+    
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise serializers.ValidationError("Username cannot be 'me'.")
+        if len(value) < 150:
+            raise serializers.ValidationError("Username too long.")
+        
+        pattern = r'^[\w.@+-]+\z'
+
+        if not re.match(pattern, value):
+            raise serializers.ValidationError("Username does not match the regex pattern")
+        return value
