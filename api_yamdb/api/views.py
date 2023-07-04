@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from api.serializers import CommentSerializer, ReviewSerializer
 
 from reviews.models import Review, Title
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -21,8 +21,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'list' or self.action == 'retrieve':
-            return ('any'(),)
-        return ('moder'(),) # I dont' know what you want(create/destroy/update)
+            return (AllowAny(),)
+        return ('permission_admin/moder'(),) # I dont' know what you want(create/destroy/update)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -37,8 +37,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'list' or self.action == 'retrieve':
-            return ('any'(),)
-        return ('moder'(),)
+            return (AllowAny(),)
+        return ('permission_admin/moder'(),)
 
     def perform_create(self, serializer):
         user = self.request.user
