@@ -23,6 +23,10 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrAction,]
     http_method_names = ['get', 'post', 'head','delete','patch']
 
+    def perform_create(self, serializer):
+        confirmation_code = str(uuid.uuid4())
+        serializer.save(confirmation_code=confirmation_code)
+        
     @action(detail=False,
             methods=['GET','PATCH'],
             permission_classes=(IsAuthenticated,)
@@ -46,36 +50,52 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def signup(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        confirmation_code = str(uuid.uuid4())
-        email_subject = 'Your confirmation code'
-        message = f'Ваш код: {confirmation_code}'
-        to_email = request.data['email']
-        try:
-            send_mail(
-                subject=email_subject,
-                message=message,
-                from_email='from@example.com',
-                recipient_list=(to_email,),
-            )
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(confirmation_code=confirmation_code)
-        return Response({
-            'username': serializer.data['username'],
-            'email': serializer.data['email']
-        })
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    confirmation_code = str(uuid.uuid4())
+    try:
+        user = User.objects.get(
+            username=request.data['username'],
+            email=request.data['email']
+        )
+        user.confirmation_code = confirmation_code
+    except Exception:
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(confirmation_code=confirmation_code)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+    email_subject = 'Your confirmation code'
+    message = f'Ваш код: {confirmation_code}'
+    to_email = request.data['email']
+    try:
+        send_mail(
+            subject=email_subject,
+            message=message,
+            from_email='from@example.com',
+            recipient_list=(to_email,),
+        )
+    except Exception:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response({
+        'username': request.data['username'],
+        'email': request.data['email']
+    })
 
 
 @api_view(['POST'])
 def send_token(request):
     username = request.data.get('username')
     confirmation_code = request.data.get('confirmation_code')
+    if (confirmation_code is None or 
+        username is None
+    ):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    user = get_object_or_404(User,
+                             username=username)
 
-
-    user = get_object_or_404(User, username=username)
 
     if user.confirmation_code == confirmation_code:
         refresh = RefreshToken.for_user(user)
