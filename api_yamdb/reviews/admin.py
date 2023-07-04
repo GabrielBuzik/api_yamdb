@@ -28,6 +28,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_editable = ('text',)
     search_fields = ('review', 'text',)
 
+
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Comment, CommentAdmin)
 
