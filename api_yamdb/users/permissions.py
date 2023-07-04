@@ -5,25 +5,33 @@ class IsAdminOrAction(permissions.BasePermission):
     def has_permission(self, request, view):
         if view.action == 'me':
             return True
-        return (request.user.is_authenticated and
+        return (
+            request.user.is_authenticated
+            and (
                 request.user.role == 'admin'
+                or request.user.is_superuser
+            )
         )
-    
+
 
 class IsModerator(permissions.BasePermission):
     def has_permission(self, request, view):
-        return (request.user.is_authenticated and
-                request.user.role in ('admin'
-                                      'moderator',
-                )
+        return (
+            request.user.is_authenticated
+            and request.user.role in (
+                'admin'
+                'moderator',
+            )
         )
 
 
 class IsUser(permissions.BasePermission):
     def has_permission(self, request, view):
-        return (request.user.is_authenticated and
-                request.user.role in ('admin',
-                                      'moderator',
-                                      'user',
-                )
+        return (
+            request.user.is_authenticated
+            and request.user.role in (
+                'admin',
+                'moderator',
+                'user',
+            )
         )

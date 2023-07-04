@@ -29,11 +29,11 @@ class User(AbstractUser):
     @property
     def is_user(self):
         return self.role == 'U'
-    
+
     @property
     def is_moderator(self):
         return self.role == 'M'
-    
+
     @property
     def is_admin(self):
         return self.role == 'A'
