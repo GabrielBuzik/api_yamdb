@@ -1,19 +1,12 @@
-<<<<<<< HEAD
-=======
-
-from django.shortcuts import render
->>>>>>> 98eb57db3d94d528c84c6afcb7994da2cf392c5e
 from django.shortcuts import get_object_or_404
 from api.serializers import CommentSerializer, ReviewSerializer
 from rest_framework import viewsets
 
-from reviews.models import Title, Category, Genre
-from .serializers import (
-    TitleSerializer, CategorySerializer, GenreSerializer,
-)
+from reviews.models import Title
+
 
 from reviews.models import Review, Title
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -54,18 +47,3 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(author=user, review=self.get_review)
-
-
-class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-
-class GenreViewSet(viewsets.ModelViewSet):
-    queryset = Genre.objects.all()
-    serializer_class = GenreSerializer

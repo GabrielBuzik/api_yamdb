@@ -88,8 +88,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text[:LIMIT_OF_COMMENT]
-<<<<<<< HEAD
-=======
 
 
 class Genre(models.Model):
@@ -157,5 +155,3 @@ class Title(models.Model):
         verbose_name='Рейтинг',
         on_delete=models.CASCADE,
     )
-
->>>>>>> 98eb57db3d94d528c84c6afcb7994da2cf392c5e
