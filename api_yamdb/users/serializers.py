@@ -14,9 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
     )
     role = serializers.ChoiceField(default='user',
         choices=User.USER_TYPE_CHOICES)
-    # role = serializers.CharField(
-    #     read_only=True
-    #     )
 
     class Meta:
         fields = (
