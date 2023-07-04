@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'reviews.apps.ReviewsConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+    'reviews',
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -104,6 +106,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
 
 
 AUTH_USER_MODEL = 'users.User'
