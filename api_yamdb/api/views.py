@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
-
 from django.shortcuts import render
->>>>>>> 98eb57db3d94d528c84c6afcb7994da2cf392c5e
 from django.shortcuts import get_object_or_404
 from api.serializers import CommentSerializer, ReviewSerializer
 from rest_framework import viewsets

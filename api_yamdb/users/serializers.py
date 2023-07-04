@@ -12,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
         max_length=254,
         validators=[UniqueValidator(queryset=User.objects.all())],
     )
-    role = serializers.CharField(read_only=True)
+    role = serializers.ChoiceField(default='user',
+        choices=User.USER_TYPE_CHOICES)
 
     class Meta:
         fields = (
@@ -28,11 +29,11 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         if value.lower() == 'me':
             raise serializers.ValidationError("Username cannot be 'me'.")
-        if len(value) < 150:
+        if len(value) > 150:
             raise serializers.ValidationError("Username too long.")
         
         pattern = r'^[\w.@+-]+\z'
 
-        if not re.match(pattern, value):
-            raise serializers.ValidationError("Username does not match the regex pattern")
+        # if not re.match(pattern, value):
+        #     raise serializers.ValidationError("Username does not match the regex pattern")
         return value

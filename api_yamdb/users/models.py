@@ -10,9 +10,10 @@ class User(AbstractUser):
     )
 
     role = models.CharField(
-        max_length=9,
+        max_length=20,
         choices=USER_TYPE_CHOICES,
-        default='U')
+        default='user',
+        blank=True)
 
     bio = models.TextField(
         'Биография',
@@ -28,12 +29,14 @@ class User(AbstractUser):
 
     @property
     def is_user(self):
-        return self.role == 'U'
 
+        return self.role == 'user'
+    
     @property
     def is_moderator(self):
-        return self.role == 'M'
+        return self.role == 'moderator'
+    
 
     @property
     def is_admin(self):
-        return self.role == 'A'
+        return self.role == 'admin'
