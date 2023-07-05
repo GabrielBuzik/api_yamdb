@@ -34,6 +34,4 @@ class UserSerializer(serializers.ModelSerializer):
         
         pattern = r'^[\w.@+-]+\z'
 
-        # if not re.match(pattern, value):
-        #     raise serializers.ValidationError("Username does not match the regex pattern")
         return value
