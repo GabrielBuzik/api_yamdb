@@ -20,21 +20,24 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()
 
-    def get_title(self):
-        title_id = int(self.kwargs.get('title_id'))
-        return get_object_or_404(Title, pk=title_id)
-
-    def get_queryset(self):
-        return self.get_title.reviews.all()
-
     def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(author=user, title=self.get_title)
+        serializer.save(author=self.request.user)
 
-    def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            return (AllowAny(),)
-        return ('permission_admin/moder'(),) # I dont' know what you want(create/destroy/update)
+    # def get_title(self):
+    #     title_id = int(self.kwargs.get('title_id'))
+    #     return get_object_or_404(Title, pk=title_id)
+
+    # def get_queryset(self):
+    #     return self.get_title.reviews.all()
+
+    # def perform_create(self, serializer):
+    #     user = self.request.user
+    #     serializer.save(author=user, title=self.get_title)
+
+    # def get_permissions(self):
+    #     if self.action == 'list' or self.action == 'retrieve':
+    #         return (AllowAny(),)
+    #     return ('permission_admin/moder'(),) # I dont' know what you want(create/destroy/update)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

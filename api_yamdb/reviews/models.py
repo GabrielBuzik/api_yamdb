@@ -61,11 +61,6 @@ class Title(models.Model):
         blank=False,
         null=True,
     )
-    # rating = models.ForeignKey(
-    #     Rating,
-    #     verbose_name='Рейтинг',
-    #     on_delete=models.CASCADE,
-    # )
 
 
 class Review(models.Model):
