@@ -1,11 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-# Create your models here.
-
-User = get_user_model()
+from users.models import User
 
 
 LIMIT_OF_COMMENT: int = 200
@@ -36,14 +33,6 @@ class Category(models.Model):
         blank=False,
         unique=True
     )
-
-
-class Rating(models.Model):
-    pass
-
-
-class User(models.Model):
-    pass
 
 
 class Title(models.Model):
@@ -218,5 +207,3 @@ class Title(models.Model):
         verbose_name='Рейтинг',
         on_delete=models.CASCADE,
     )
-
-
