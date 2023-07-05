@@ -1,12 +1,12 @@
-
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from api.serializers import CommentSerializer, ReviewSerializer
+
 from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
 
 from reviews.models import Title, Category, Genre
 from .serializers import (
     TitleSerializer, CategorySerializer, GenreSerializer,
+    CommentSerializer, ReviewSerializer
 )
 
 from reviews.models import Review, Title
@@ -28,8 +28,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'list' or self.action == 'retrieve':
-            return ('any'(),)
-        return ('moder'(),) # I dont' know what you want(create/destroy/update)
+            return (AllowAny(),)
+        return ('moder'(),)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -44,7 +44,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'list' or self.action == 'retrieve':
-            return ('any'(),)
+            return (AllowAny(),)
         return ('moder'(),)
 
     def perform_create(self, serializer):

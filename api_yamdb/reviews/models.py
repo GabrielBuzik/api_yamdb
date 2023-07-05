@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-# Create your models here.
 
 User = get_user_model()
 
@@ -80,14 +79,6 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='Произведение',
-        db_index=True,
-        null=False
-    )
     text = models.TextField('Содержание отзыва')
     author = models.ForeignKey(
         User,
@@ -114,7 +105,7 @@ class Review(models.Model):
         ordering = ('-pub_date',)
         constraints = (
             models.UniqueConstraint(
-                fields=('title', 'author',),
+                fields=('author',),
                 name='unique_title_author'
             ),
         )

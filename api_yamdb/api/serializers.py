@@ -3,7 +3,7 @@ from rest_framework.relations import SlugRelatedField
 # from django.shortcuts import get_object_or_404
 
 from reviews.models import Title, Category, Genre
-from reviews.models import Comment, Review, Title
+from reviews.models import Comment, Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('title', 'score', 'text', 'author', 'pub_date')
+        fields = ('score', 'text', 'author', 'pub_date')
 
     def validate(self, data):
         if self.context['request'].method == 'POST':
