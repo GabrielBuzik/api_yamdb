@@ -46,20 +46,6 @@ class CommentSerializer(serializers.ModelSerializer):
         exclude = ('review',)
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
-    year = serializers.IntegerField(required=False)
-    genre = serializers.SlugRelatedField(many=True,
-                                         slug_field='slug',
-                                         queryset=Genre.objects.all())
-    category = serializers.SlugRelatedField(slug_field='slug',
-                                            queryset=Category.objects.all())
-
-    class Meta:
-        model = Title
-        fields = ('id', 'name', 'year','category', 'description', 'genre')
-
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -70,3 +56,26 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ('name', 'slug')
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    year = serializers.IntegerField(required=False)
+    description = serializers.CharField(required=False)
+    genre = serializers.SlugRelatedField(many=True,
+                                         slug_field='slug',
+                                         queryset=Genre.objects.all())
+    category = serializers.SlugRelatedField(slug_field='slug',
+                                            queryset=Category.objects.all())
+
+
+    class Meta:
+        model = Title
+        fields = (
+            'id',
+            'name',
+            'year',
+            'category',
+            'description',
+            'genre'
+        )

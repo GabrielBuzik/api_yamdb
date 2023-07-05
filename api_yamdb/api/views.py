@@ -5,6 +5,7 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import filters
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from reviews.models import Title, Category, Genre
 from .serializers import (
@@ -63,6 +64,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    pagination_class = PageNumberPagination
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
