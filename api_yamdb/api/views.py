@@ -1,22 +1,19 @@
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from http import HTTPStatus
-from django.http import HttpRequest
-
-from api.serializers import CommentSerializer, ReviewSerializer
-from rest_framework import viewsets, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework import filters
-from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
+from rest_framework import filters, status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.response import Response
 
 from reviews.models import Title, Category, Genre
 from .serializers import (
     TitleSerializer, CategorySerializer, GenreSerializer,
 )
 
+from api.serializers import CommentSerializer, ReviewSerializer
 from reviews.models import Review, Title
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from users import permissions
 
 
@@ -26,22 +23,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-    # def get_title(self):
-    #     title_id = int(self.kwargs.get('title_id'))
-    #     return get_object_or_404(Title, pk=title_id)
-
-    # def get_queryset(self):
-    #     return self.get_title.reviews.all()
-
-    # def perform_create(self, serializer):
-    #     user = self.request.user
-    #     serializer.save(author=user, title=self.get_title)
-
-    # def get_permissions(self):
-    #     if self.action == 'list' or self.action == 'retrieve':
-    #         return (AllowAny(),)
-    #     return ('permission_admin/moder'(),) # I dont' know what you want(create/destroy/update)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -79,6 +60,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
@@ -87,3 +75,9 @@ class GenreViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
