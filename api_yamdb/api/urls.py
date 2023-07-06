@@ -2,8 +2,8 @@ from rest_framework.routers import DefaultRouter
 from django.urls import include, path
 
 from api.views import (
-    TitleViewSet, CategoryViewSet, GenreViewSet, ReviewSerializer,
-    CommentSerializer, ReviewViewSet, CommentViewSet
+    TitleViewSet, CategoryViewSet, GenreViewSet,
+    ReviewViewSet, CommentViewSet
 
 )
 
