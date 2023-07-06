@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+from http import HTTPStatus
+from django.http import HttpRequest
+
 from api.serializers import CommentSerializer, ReviewSerializer
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -65,13 +68,14 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [permissions.IsGetOrAdmin, ]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
-    permission_classes = [permissions.IsGetOrAdmin,]
+    permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
@@ -80,6 +84,6 @@ class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
-    permission_classes = [permissions.IsGetOrAdmin,]
+    permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']

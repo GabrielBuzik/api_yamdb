@@ -1,9 +1,8 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from users.models import User
-
+from . validators import validate_year
 
 LIMIT_OF_COMMENT: int = 200
 SIGNS_OF_REVIEW: int = 500
@@ -12,12 +11,10 @@ SIGNS_OF_REVIEW: int = 500
 class Genre(models.Model):
     name = models.CharField(
         verbose_name='Название',
-        # blank=False,
         max_length=256,
     )
     slug = models.SlugField(
         max_length=50,
-        blank=False,
         unique=True
     )
 
@@ -25,12 +22,10 @@ class Genre(models.Model):
 class Category(models.Model):
     name = models.CharField(
         verbose_name='Название',
-        blank=False,
         max_length=256,
     )
     slug = models.SlugField(
         max_length=50,
-        blank=False,
         unique=True
     )
 
@@ -38,15 +33,15 @@ class Category(models.Model):
 class Title(models.Model):
     name = models.CharField(
         verbose_name='Название',
-        blank=False,
         max_length=256,
     )
-    year = models.DateField(
+    year = models.IntegerField(
+        validators=[validate_year],
         verbose_name='Год выпуска',
-        blank=False,
     )
     description = models.TextField(
-        verbose_name='Описание'
+        verbose_name='Описание',
+        blank=True
     )
     genre = models.ManyToManyField(
         Genre,
@@ -57,8 +52,8 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category,
         verbose_name='Категория',
-        on_delete=models.CASCADE,
-        blank=False,
+        on_delete=models.SET_NULL,
+        related_name='titles',
         null=True,
     )
 
