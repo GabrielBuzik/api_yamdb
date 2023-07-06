@@ -1,9 +1,6 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
 from rest_framework import filters, status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 
 from reviews.models import Title, Category, Genre
@@ -15,34 +12,6 @@ from api.serializers import CommentSerializer, ReviewSerializer
 from reviews.models import Review, Title
 from rest_framework.permissions import AllowAny
 from users import permissions
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = ReviewSerializer
-    queryset = Review.objects.all()
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-
-class CommentViewSet(viewsets.ModelViewSet):
-    serializer_class = CommentSerializer
-
-    def get_review(self):
-        review_id = int(self.kwargs.get('review_id'))
-        return get_object_or_404(Review, id=review_id)
-
-    def get_queryset(self):
-        return self.get_review.comments.all()
-
-    def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            return (AllowAny(),)
-        return ('permission_admin/moder'(),)
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(author=user, review=self.get_review)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
