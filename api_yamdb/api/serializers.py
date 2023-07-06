@@ -35,15 +35,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(
-        default=serializers.CurrentUserDefault(),
+    author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
     )
+    review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
+        fields = '__all__'
         model = Comment
-        exclude = ('review',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -68,14 +68,6 @@ class TitleSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field='slug',
                                             queryset=Category.objects.all())
 
-
     class Meta:
         model = Title
-        fields = (
-            'id',
-            'name',
-            'year',
-            'category',
-            'description',
-            'genre'
-        )
+        fields = ('__all__')
