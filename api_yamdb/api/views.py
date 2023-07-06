@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404
-
 from rest_framework import viewsets, status
 from rest_framework import filters
 from rest_framework.response import Response
+
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.response import Response
 
 from reviews.models import Title, Category, Genre
 from .serializers import (
@@ -11,7 +13,9 @@ from .serializers import (
     CommentSerializer, ReviewSerializer
 )
 
+from api.serializers import CommentSerializer, ReviewSerializer
 from reviews.models import Review, Title
+from rest_framework.permissions import AllowAny
 from users import permissions
 
 
@@ -65,19 +69,34 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=self.get_title)
 
 
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
-    permission_classes = [permissions.IsGetOrAdmin,]
+    permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
-    permission_classes = [permissions.IsGetOrAdmin,]
+    permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def partial_update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
