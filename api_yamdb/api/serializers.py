@@ -3,6 +3,7 @@ from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Title, Category, Genre
 from reviews.models import Comment, Review, Title
+from reviews.validators import validate_year
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -59,15 +60,26 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(read_only=True)
-    year = serializers.IntegerField(required=False)
-    description = serializers.CharField(required=False)
-    genre = serializers.SlugRelatedField(many=True,
-                                         slug_field='slug',
-                                         queryset=Genre.objects.all())
-    category = serializers.SlugRelatedField(slug_field='slug',
-                                            queryset=Category.objects.all())
+    genre = GenreSerializer(many=True)
+    category = CategorySerializer()
+    rating = serializers.IntegerField(
+        source='reviews__score__avg', read_only=True
+    )
 
     class Meta:
         model = Title
-        fields = ('__all__')
+        fields = '__all__'
+
+
+class TitleCreateAndUpdateSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', many=True, queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Category.objects.all()
+    )
+    year = serializers.IntegerField(validators=[validate_year])
+
+    class Meta:
+        model = Title
+        fields = '__all__'
