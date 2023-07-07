@@ -56,6 +56,7 @@ class Title(models.Model):
         related_name='titles',
         null=True,
     )
+    rating = models.FloatField(null=True)
 
 
 class Review(models.Model):

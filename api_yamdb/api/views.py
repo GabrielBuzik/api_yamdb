@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import Avg
+
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import viewsets, status
@@ -20,6 +21,7 @@ from api.permissions import AuthorModeratorAdminOrReadOnly
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         Avg('reviews__score'))
+    queryset = Title.objects.all()
     pagination_class = PageNumberPagination
     permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
@@ -67,8 +69,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return title.reviews.all()
 
     def perform_create(self, serializer):
+
         title = get_object_or_404(Title, id=self.kwargs['title_id'])
         serializer.save(author=self.request.user, title=title)
+
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
