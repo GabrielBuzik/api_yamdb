@@ -20,7 +20,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('title', 'score', 'text', 'author', 'pub_date')
+        fields = ('id', 'title', 'score', 'text', 'author', 'pub_date')
 
     def validate(self, data):
         if self.context['request'].method == 'POST':
@@ -63,7 +63,11 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
     rating = serializers.IntegerField(
+
+        source='reviews__score__avg',
+        read_only=True
         source='reviews__score__avg', read_only=True
+
     )
 
     class Meta:
@@ -82,4 +86,7 @@ class TitleCreateAndUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
+
         fields = '__all__'
+        fields = '__all__'
+
