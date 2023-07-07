@@ -31,7 +31,7 @@ class User(AbstractUser):
     def is_user(self):
 
         return self.role == 'user'
-    
+
     @property
     def is_moderator(self):
         return self.role == 'moderator'

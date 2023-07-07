@@ -5,11 +5,11 @@ from rest_framework.decorators import api_view
 from rest_framework import filters, viewsets, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 import uuid
 
-from .permissions import IsAdminOrAction, IsUser
+from .permissions import IsAdminOrAction
 from .models import User
 from .serializers import UserSerializer
 
@@ -21,24 +21,25 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ('username',)
     permission_classes = [IsAdminOrAction,]
-    http_method_names = ['get', 'post', 'head','delete','patch']
+    http_method_names = ['get', 'post', 'head', 'delete', 'patch']
 
     def perform_create(self, serializer):
         confirmation_code = str(uuid.uuid4())
         serializer.save(confirmation_code=confirmation_code)
-        
+
     @action(detail=False,
-            methods=['GET','PATCH'],
+            methods=['GET', 'PATCH'],
             permission_classes=(IsAuthenticated,)
-        )
+            )
     def me(self, request):
         if request.method == 'GET':
             serializer = UserSerializer(request.user)
-            return Response(serializer.data,
-                            status=status.HTTP_200_OK
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
             )
         user = request.user
-        role=user.role
+        role = user.role
         serializer = UserSerializer(user,
                                     data=request.data,
                                     partial=True)
@@ -50,7 +51,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def signup(request):
-    
+
     confirmation_code = str(uuid.uuid4())
     try:
         user = User.objects.get(
@@ -63,9 +64,11 @@ def signup(request):
         if serializer.is_valid():
             serializer.save(confirmation_code=confirmation_code)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    
     email_subject = 'Your confirmation code'
     message = f'Ваш код: {confirmation_code}'
     to_email = request.data['email']
@@ -88,20 +91,14 @@ def signup(request):
 def send_token(request):
     username = request.data.get('username')
     confirmation_code = request.data.get('confirmation_code')
-    if (confirmation_code is None or 
-        username is None
-    ):
+    if (confirmation_code is None or username is None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+
     user = get_object_or_404(User,
                              username=username)
 
-
     if user.confirmation_code == confirmation_code:
         refresh = RefreshToken.for_user(user)
-        token = {
-        'token': str(refresh.access_token)
-        }
+        token = {'token': str(refresh.access_token)}
         return Response(token)
     return Response(status=status.HTTP_400_BAD_REQUEST)
-    

@@ -76,8 +76,8 @@ class Review(models.Model):
         db_index=True,
         null=False
     )
-    score = models.PositiveSmallIntegerField(
-        'Оценка',
+    score = models.PositiveIntegerField(
+        'Рейтинг',
         null=False,
         validators=(
             MinValueValidator(1, 'Минимум 1',),
