@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import viewsets, status
 from rest_framework import filters
 from rest_framework.response import Response
@@ -10,7 +12,7 @@ from rest_framework.response import Response
 from reviews.models import Title, Category, Genre
 from .serializers import (
     TitleSerializer, CategorySerializer, GenreSerializer,
-    CommentSerializer, ReviewSerializer
+    CommentSerializer, ReviewSerializer, TitleCreateAndUpdateSerializer
 )
 
 from api.serializers import CommentSerializer, ReviewSerializer
@@ -21,9 +23,25 @@ from users import permissions
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
     pagination_class = PageNumberPagination
     permission_classes = [permissions.IsGetOrAdmin, ]
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filterset_fields = ('name', 'year', 'category__slug', 'genre__slug',)
+
+    def get_serializer_class(self):
+        if self.request.method in ('POST', 'PATCH'):
+            return TitleCreateAndUpdateSerializer
+        return TitleSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        genre_slug = self.request.query_params.get('genre')
+        category_slug = self.request.query_params.get('category')
+        if genre_slug:
+            queryset = queryset.filter(genre__slug=genre_slug)
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        return queryset
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -69,8 +87,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=self.get_title)
 
 
-
-
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -81,10 +97,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
     def partial_update(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -97,6 +112,6 @@ class GenreViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
     def partial_update(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
