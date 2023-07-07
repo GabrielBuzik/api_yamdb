@@ -5,14 +5,19 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework import filters
 from rest_framework.response import Response
+
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 from reviews.models import Title, Category, Genre
 from .serializers import (
     TitleSerializer, CategorySerializer, GenreSerializer,
     CommentSerializer, ReviewSerializer, TitleCreateAndUpdateSerializer
 )
+
+from api.serializers import CommentSerializer, ReviewSerializer
 from reviews.models import Review, Title
+
 from users import permissions
 from api.permissions import AuthorModeratorAdminOrReadOnly
 
