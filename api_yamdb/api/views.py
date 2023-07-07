@@ -7,7 +7,6 @@ from rest_framework import filters
 from rest_framework.response import Response
 
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 
 from reviews.models import Title, Category, Genre
 from .serializers import (
@@ -17,7 +16,6 @@ from .serializers import (
 
 from api.serializers import CommentSerializer, ReviewSerializer
 from reviews.models import Review, Title
-
 from users import permissions
 from api.permissions import AuthorModeratorAdminOrReadOnly
 
@@ -76,6 +74,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=title)
 
 
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -86,9 +86,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+    
     def partial_update(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -101,6 +102,6 @@ class GenreViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+    
     def partial_update(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
