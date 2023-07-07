@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     filter_backends = [filters.SearchFilter]
     search_fields = ('username',)
-    permission_classes = [IsAdminOrAction,]
+    permission_classes = [IsAdminOrAction, ]
     http_method_names = ['get', 'post', 'head', 'delete', 'patch']
 
     def perform_create(self, serializer):
