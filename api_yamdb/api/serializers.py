@@ -2,6 +2,8 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from django.db.models import Avg
 
+
+from reviews.validators import validate_year
 from reviews.models import (
     Category,
     Genre,
@@ -55,25 +57,20 @@ class CommentSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug')
+        exclude = ('id', )
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ('id', )
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleGetSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     description = serializers.CharField(required=False)
-    genre = serializers.SlugRelatedField(
-        many=True,
-        queryset=Genre.objects.all(),
-        slug_field='slug'
-    )
-    category = serializers.SlugRelatedField(slug_field='slug',
-                                            queryset=Category.objects.all())
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(read_only=True, many=True)
     rating = serializers.SerializerMethodField()
 
     class Meta:
@@ -88,27 +85,6 @@ class TitleSerializer(serializers.ModelSerializer):
             'rating'
         )
 
-    def create(self, validated_data):
-
-        genres = validated_data.pop('genre')
-
-        title = Title.objects.create(**validated_data)
-
-        for genre in genres:
-            title.genre.add(genre)
-
-        return title
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data['category'] = CategorySerializer(instance.category).data
-        genres = Genre.objects.filter(slug__in=data['genre'])
-        genre_data = GenreSerializer(genres, many=True).data
-        data['genre'] = genre_data
-
-        return data
-
     def get_rating(self, obj):
 
         rating = Review.objects.filter(
@@ -116,6 +92,20 @@ class TitleSerializer(serializers.ModelSerializer):
         ).aggregate(Avg("score"))['score__avg']
 
         return rating
+
+
+class TitlePostSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', many=True, queryset=Genre.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Category.objects.all()
+    )
+    year = serializers.IntegerField(validators=[validate_year])
+
+    class Meta:
+        model = Title
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
