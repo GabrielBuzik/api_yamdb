@@ -1,9 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-USER ='user'
+
+USER = 'user'
 MODERATOR = 'moderator'
 ADMIN = 'admin'
+
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = (

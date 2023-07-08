@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status, filters
-from rest_framework.response import Response
+from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
 from reviews.models import Title, Category, Genre, Review, Title
@@ -19,7 +18,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsGetOrAdmin, ]
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_fields = ('name', 'year', 'category__slug', 'genre__slug',)
-  
+
     def get_queryset(self):
         queryset = super().get_queryset()
         genre_slug = self.request.query_params.get('genre')
@@ -29,7 +28,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
         return queryset
-    
+
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return TitleGetSerializer
