@@ -1,3 +1,6 @@
+import uuid
+
+
 from django.core.mail import send_mail
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,11 +10,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
-import uuid
 
 from .permissions import IsAdminOrAction
 from .models import User
 from .serializers import UserSerializer
+from api_yamdb.settings import EMAIL_HOST_USER
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -24,8 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'head', 'delete', 'patch']
 
     def perform_create(self, serializer):
-        confirmation_code = str(uuid.uuid4())
-        serializer.save(confirmation_code=confirmation_code)
+        serializer.save()
 
     @action(detail=False,
             methods=['GET', 'PATCH'],
@@ -43,15 +45,13 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user,
                                     data=request.data,
                                     partial=True)
-        if serializer.is_valid():
-            serializer.save(role=role)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(role=role)
+        return Response(serializer.data)
 
 
 @api_view(['POST'])
 def signup(request):
-
     confirmation_code = str(uuid.uuid4())
     try:
         user = User.objects.get(
@@ -61,13 +61,8 @@ def signup(request):
         user.confirmation_code = confirmation_code
     except Exception:
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(confirmation_code=confirmation_code)
-        else:
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(confirmation_code=confirmation_code)
 
     email_subject = 'Your confirmation code'
     message = f'Ваш код: {confirmation_code}'
@@ -76,7 +71,7 @@ def signup(request):
         send_mail(
             subject=email_subject,
             message=message,
-            from_email='from@example.com',
+            from_email=EMAIL_HOST_USER,
             recipient_list=(to_email,),
         )
     except Exception:

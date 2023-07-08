@@ -1,12 +1,15 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+USER ='user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
-        ('user', 'User'),
-        ('moderator', 'Moderator'),
-        ('admin', 'Admin'),
+        (USER, 'User'),
+        (MODERATOR, 'Moderator'),
+        (ADMIN, 'Admin'),
     )
 
     role = models.CharField(
@@ -30,12 +33,12 @@ class User(AbstractUser):
     @property
     def is_user(self):
 
-        return self.role == 'user'
+        return self.role == USER
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == MODERATOR
 
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role == ADMIN
