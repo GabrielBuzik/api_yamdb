@@ -1,7 +1,5 @@
 from rest_framework import viewsets, filters, mixins
 
-from users import permissions
-
 
 class ListCreateDestroyViewSet(mixins.CreateModelMixin,
                                mixins.ListModelMixin,
