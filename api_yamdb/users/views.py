@@ -1,6 +1,5 @@
 import uuid
 
-
 from django.core.mail import send_mail
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,7 +8,6 @@ from rest_framework import filters, viewsets, status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-
 
 from .permissions import IsAdminOrAction
 from .models import User
@@ -25,9 +23,6 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ('username',)
     permission_classes = [IsAdminOrAction, ]
     http_method_names = ['get', 'post', 'head', 'delete', 'patch']
-
-    def perform_create(self, serializer):
-        serializer.save()
 
     @action(detail=False,
             methods=['GET', 'PATCH'],

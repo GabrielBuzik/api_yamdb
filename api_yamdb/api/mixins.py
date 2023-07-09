@@ -1,9 +1,12 @@
-from rest_framework import mixins
-from rest_framework import viewsets
+from rest_framework import viewsets, filters, mixins
+
+from users import permissions
 
 
 class ListCreateDestroyViewSet(mixins.CreateModelMixin,
                                mixins.ListModelMixin,
                                mixins.DestroyModelMixin,
                                viewsets.GenericViewSet):
-    pass
+    lookup_field = 'slug'
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
