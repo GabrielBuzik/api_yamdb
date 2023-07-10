@@ -64,14 +64,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [permissions.IsGetOrAdmin, ]
-    filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = [permissions.IsGetOrAdmin, ]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
